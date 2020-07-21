@@ -36,6 +36,7 @@ private:
     void setSliderText(String paramID, float resolution);
     void calculateBounds();
     void changeTypeText(int typeValue);
+    void changeTypeText(juce::String typeName);
     
     Svf_v2AudioProcessor& processor;
     SimpleLookAndFeel simpleLookAndFeel;
@@ -49,7 +50,7 @@ private:
     std::unique_ptr<SliderAttachment> gainAttachment;
 
     HashMap<String, int> knobMap;
-    Rectangle<int> title;
+    Rectangle<int> title, infoLeft, infoRight;
     Label mStateText;
     String stateString;
     int titleHeight, reduction;

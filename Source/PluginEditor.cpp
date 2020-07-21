@@ -9,7 +9,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
 //==============================================================================
 Svf_v2AudioProcessorEditor::Svf_v2AudioProcessorEditor (Svf_v2AudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
@@ -57,17 +56,17 @@ void Svf_v2AudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (Colours::black);
     g.setColour (Colours::yellow);
+    g.setFont (Font (Font::getDefaultMonospacedFontName(), titleFontSize, Font::plain));
     
-    g.setFont (Font ("Monospaced", titleFontSize, Font::plain));
-    g.drawRect(title);
     for (int i = 0; i < knobArraySize; i++)
     {
         knobArray[i].drawOutline(g);
     }
     
     g.setColour(Colours::white);
-    g.setFont (Font ("Monospaced", titleFontSize, Font::plain));
-    g.drawFittedText ("SVF V_2", title, Justification::centred, 1);
+    g.setFont (Font (Font::getDefaultMonospacedFontName(), titleFontSize, Font::bold));
+    g.drawFittedText ("Chamberlin SVF V_2", title, Justification::bottomLeft, 1);
+    
 }
 
 void Svf_v2AudioProcessorEditor::sliderValueChanged(Slider *slider)
@@ -103,7 +102,6 @@ void Svf_v2AudioProcessorEditor::setSliderText(String paramID, float resolution)
     }
     else
     {
-        
         float value = knobArray[knobMap[paramID]].getValue();
         value = round(value * (1.0f / resolution)) * resolution;
         knobArray[knobMap[paramID]].value.setText((String) value , dontSendNotification);
@@ -118,9 +116,10 @@ void Svf_v2AudioProcessorEditor::calculateBounds()
     titleHeight = r.getHeight() / 4;
     
     title = r.removeFromTop(titleHeight);
-    title.reduce(reduction, reduction);
-    titleFontSize = title.getHeight() * 0.5;
-    
+    title.reduce(reduction * 6, reduction * 2);
+    titleFontSize = title.getHeight() * 0.65;
+    r.removeFromBottom(titleHeight / 4);
+    r.reduce(reduction * 2, reduction);
     int knobWidth = r.getWidth() / knobArraySize;
     
     for (int i = 0; i < knobArraySize; i++)
@@ -156,18 +155,24 @@ void Svf_v2AudioProcessorEditor::changeTypeText(int typeValue)
     switch(typeValue)
     {
         case 0:
-            knobArray[knobMap["type"]].value.setText("low", dontSendNotification);
+            changeTypeText("low");
             break;
         case 1:
-            knobArray[knobMap["type"]].value.setText("band", dontSendNotification);
+            changeTypeText("band");
             break;
         case 2:
-            knobArray[knobMap["type"]].value.setText("notch", dontSendNotification);
+            changeTypeText("notch");
             break;
         case 3:
-            knobArray[knobMap["type"]].value.setText("high", dontSendNotification);
+            changeTypeText("high");
             break;
         default:
-            knobArray[knobMap["type"]].value.setText("low", dontSendNotification);
+            changeTypeText("low");
     }
 }
+
+void Svf_v2AudioProcessorEditor::changeTypeText(juce::String typeName)
+{
+    knobArray[knobMap["type"]].value.setText(typeName, dontSendNotification);
+}
+
